@@ -9,8 +9,9 @@ import com.fasterxml.jackson.databind.util.StdDateFormat;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
-import com.github.mozvip.builds.Artifact;
 import com.github.mozvip.builds.BuildProvider;
+import com.github.mozvip.builds.artifact.Artifact;
+import com.github.mozvip.builds.artifact.HTTPArtifact;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -18,9 +19,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.time.ZonedDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -65,7 +65,8 @@ public class AppVeyorBuildProvider implements BuildProvider {
         return jobRegExp;
     }
 
-    public Artifact retrieveLatestArtifact(ZonedDateTime latestRetrievedDate) throws IOException {
+    @Override
+    public List<Artifact> retrieveLatestArtifacts(ZonedDateTime latestRetrievedDate) throws IOException {
 
         ProjectAndBuild projectAndBuild;
 
@@ -75,6 +76,10 @@ public class AppVeyorBuildProvider implements BuildProvider {
 
         try (Response response = client.newCall(request).execute()) {
             projectAndBuild = objectMapper.readValue(response.body().string(), ProjectAndBuild.class);
+        }
+
+        if (projectAndBuild.getBuild().getFinished() == null) {
+            return null;
         }
 
         if (latestRetrievedDate != null && !projectAndBuild.getBuild().getFinished().isAfter(latestRetrievedDate)) {
@@ -101,22 +106,9 @@ public class AppVeyorBuildProvider implements BuildProvider {
                             return null;
                         }
 
-                        if (deploymentName.equals(artifact.getName()) || deploymentName.equals(artifact.getFileName())) {
+                        if (deploymentName == null || deploymentName.equals(artifact.getName()) || deploymentName.equals(artifact.getFileName())) {
                             String artifactUrl = String.format("https://ci.appveyor.com/api/buildjobs/%s/artifacts/%s", job.getJobId(), artifact.getFileName());
-
-                            Request artifactRequest = new Request.Builder()
-                                    .url(artifactUrl)
-                                    .build();
-
-                            try (Response artifactResponse = client.newCall(artifactRequest).execute()) {
-
-                                Path tempDirectory = Files.createTempDirectory("");
-                                Path outputFile = tempDirectory.resolve(artifact.getFileName());
-                                LOGGER.info("Downloading from url {} to file {}", artifactUrl, outputFile.toAbsolutePath().toString());
-                                Files.copy(artifactResponse.body().byteStream(), outputFile);
-
-                                return new Artifact(outputFile, artifact.getCreated());
-                            }
+                            return Arrays.asList(new HTTPArtifact(artifact.getFileName(), artifactUrl, artifact.getCreated()));
                         }
 
                     }

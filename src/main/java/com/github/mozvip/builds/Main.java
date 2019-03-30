@@ -8,6 +8,7 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.github.mozvip.builds.appveyor.AppVeyorBuildProvider;
+import com.github.mozvip.builds.artifact.Artifact;
 import com.github.mozvip.builds.location.LocalFolderLocation;
 
 import java.awt.*;
@@ -41,7 +42,7 @@ public class Main {
             BuildInstallItem rpcs3 = new BuildInstallItem(
                     "rpcs3 master",
                     new AppVeyorBuildProvider("rpcs3/rpcs3", "master", null, "rpcs3"),
-                    new LocalFolderLocation(Paths.get("d:\\emu\\rpcs3"))
+                    new LocalFolderLocation(Paths.get("d:\\emu\\rpcs3")), null, false
             );
 
             items.add(rpcs3);
@@ -56,9 +57,10 @@ public class Main {
         boolean downloaded = false;
 
         for (BuildInstallItem item : items) {
-            Artifact artifact = item.checkAndInstall();
-            if (artifact != null) {
-                displayTray("New build for " + item.getName(), artifact.getFile().toString());
+            List<Artifact> artifacts = item.checkAndInstall();
+            if (artifacts != null && !artifacts.isEmpty()) {
+                String message = item.getLocation() != null ? item.getLocation().toString() : item.getLatestRetrievalDate().toString();
+                displayTray("New build for " + item.getName(), message);
                 downloaded = true;
             }
         }

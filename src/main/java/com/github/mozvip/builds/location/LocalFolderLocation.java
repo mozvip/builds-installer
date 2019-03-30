@@ -2,7 +2,7 @@ package com.github.mozvip.builds.location;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.github.mozvip.builds.Artifact;
+import com.github.mozvip.builds.artifact.Artifact;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,6 +14,7 @@ import java.nio.file.StandardCopyOption;
 public class LocalFolderLocation extends InstallationLocation {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(LocalFolderLocation.class);
+    public static final String _7_ZIP_EXE = "c:\\Program Files\\7-Zip\\7z.exe";
 
     private Path folder;
 
@@ -28,15 +29,15 @@ public class LocalFolderLocation extends InstallationLocation {
 
     @Override
     public void importArtifact(Artifact latestArtifact) throws IOException {
-        LOGGER.info("Importing artifact {}", latestArtifact);
-
         Files.createDirectories(folder);
 
-        String file = latestArtifact.getFile().toString();
+        Path localPath = latestArtifact.toLocalPath();
+
+        String file = localPath.toString();
         if (file.endsWith(".7z") || file.endsWith(".zip")) {
 
             ProcessBuilder pb =
-                    new ProcessBuilder("c:\\Program Files\\7-Zip\\7z.exe", "x", latestArtifact.getFile().toAbsolutePath().toString(), "-o"+folder.toAbsolutePath().toString(), "-y");
+                    new ProcessBuilder(_7_ZIP_EXE, "x", localPath.toAbsolutePath().toString(), "-o"+folder.toAbsolutePath().toString(), "-y");
 
             Process p = pb.start();
             try {
@@ -46,17 +47,13 @@ public class LocalFolderLocation extends InstallationLocation {
             }
 
         } else {
-            Path destinationFile = folder.resolve(latestArtifact.getFile().getFileName());
-            Files.move(latestArtifact.getFile(), destinationFile, StandardCopyOption.REPLACE_EXISTING);
+            Path destinationFile = folder.resolve(localPath.getFileName());
+            Files.move(localPath, destinationFile, StandardCopyOption.REPLACE_EXISTING);
         }
-
-
     }
 
     @Override
     public String toString() {
-        return "LocalFolderLocation{" +
-                "folder=" + folder +
-                '}';
+        return folder.toAbsolutePath().toString();
     }
 }

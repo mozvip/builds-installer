@@ -1,6 +1,93 @@
 [
-  {"name":"rpcs3 master","provider":{"type":"appVeyor", "projectName":"rpcs3/rpcs3", "branch":"master", "deploymentName": "rpcs3"},"location":{"folder":"file:///d:/emu/rpcs3/"},"latestRetrievalDate":"2019-03-24T16:31:07.0893223Z"},
-  {"name":"xenia d3d12","provider":{"type":"appVeyor", "projectName":"benvanik/xenia", "branch":"d3d12", "jobRegExp":"Configuration: Release", "deploymentName": "xenia-d3d12.zip"},"location":{"folder":"file:///d:/emu/xenia-d3d12"}},
-  {"name":"xenia master","provider":{"type":"appVeyor", "projectName":"benvanik/xenia", "branch":"master", "jobRegExp":"Configuration: Release", "deploymentName": "xenia-master.zip"},"location":{"folder":"file:///d:/emu/xenia-master"}},
-  {"name":"pcsx2 master","provider":{"type":"appVeyor", "projectName":"gregory38/pcsx2", "branch":"master", "jobRegExp":".*Visual Studio 2017.*", "deploymentName": "vs2017-AppVeyor"},"location":{"folder":"file:///d:/emu/pcsx2"}}
+  {
+    "name": "rpcs3 master",
+    "provider": {
+      "type": "appVeyor",
+      "projectName": "rpcs3/rpcs3",
+      "branch": "master",
+      "jobRegExp": null,
+      "deploymentName": "rpcs3"
+    },
+    "location": {
+      "type": "local",
+      "folder": "file:///d:/emu/rpcs3/"
+    },
+    "suppressParentFolder": false,
+    "latestRetrievalDate": "2019-03-27T22:32:39.9504622Z"
+  },
+  {
+    "name": "cxbx-reloaded develop",
+    "provider": {
+      "type": "appVeyor",
+      "projectName": "SoullessSentinel/cxbx-reloaded",
+      "branch": "develop",
+      "jobRegExp": "Configuration: Release",
+      "deploymentName": null
+    },
+    "location": {
+      "type": "local",
+      "folder": "file:///d:/emu/cxbx-reloaded/"
+    },
+    "suppressParentFolder": false,
+    "latestRetrievalDate": "2019-03-29T11:39:24.2Z"
+  },
+  {
+    "name": "OpenMW",
+    "provider": {
+      "type": "githubRelease",
+      "projectName": "OpenMW/openmw",
+      "assetNameRegExp": ".*win64.*"
+    },
+    "postInstallCmd": "${ARTIFACT} /SD /D=\"D:\\Games\\OpenMW",
+    "suppressParentFolder": false,
+    "latestRetrievalDate": "2019-03-29T09:22:32Z"
+  },
+  {
+    "name": "xenia d3d12",
+    "provider": {
+      "type": "appVeyor",
+      "projectName": "benvanik/xenia",
+      "branch": "d3d12",
+      "jobRegExp": "Configuration: Release",
+      "deploymentName": "xenia-d3d12.zip"
+    },
+    "location": {
+      "type": "local",
+      "folder": "file:///d:/emu/xenia-d3d12/"
+    },
+    "suppressParentFolder": false,
+    "latestRetrievalDate": "2019-03-07T08:32:27.377462Z"
+  },
+  {
+    "name": "xenia master",
+    "provider": {
+      "type": "appVeyor",
+      "projectName": "benvanik/xenia",
+      "branch": "master",
+      "jobRegExp": "Configuration: Release",
+      "deploymentName": "xenia-master.zip"
+    },
+    "location": {
+      "type": "local",
+      "folder": "file:///d:/emu/xenia-master/"
+    },
+    "suppressParentFolder": false,
+    "latestRetrievalDate": "2019-03-10T23:47:00.6738125Z"
+  },
+  {
+    "name": "pcsx2 master",
+    "provider": {
+      "type": "appVeyor",
+      "projectName": "gregory38/pcsx2",
+      "branch": "master",
+      "jobRegExp": ".*Visual Studio 2017.*",
+      "deploymentName": "vs2017-AppVeyor"
+    },
+    "location": {
+      "type": "local",
+      "folder": "file:///d:/emu/pcsx2/"
+    },
+    "suppressParentFolder": true,
+    "latestRetrievalDate": "2019-03-26T22:38:50.9664916Z"
+  }
 ]
